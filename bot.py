@@ -22,7 +22,7 @@ async def on_ready():
     print(f"Bot aktif sebagai {bot.user}")
 
 
-WELCOME_CHANNEL_NAME = os.getenv("WELCOME_CHANNEL_NAME", "general")
+WELCOME_CHANNEL_NAME = os.getenv("selamat-datang", "general")
 
 
 @bot.event
@@ -39,8 +39,8 @@ async def on_member_join(member):
     embed = discord.Embed(
         title="Selamat Datang! 🎉",
         description=(
-            f"Halo {member.mention}, selamat datang di **{member.guild.name}**!\n"
-            f"Sekarang kita ada **{member.guild.member_count}** member. Semoga betah ya! 👋"
+            f"H-hi {member.mention}, welcome to **{member.guild.name}**!\n"
+            f"We h-have **{member.guild.member_count}** member(s). h-hope you have a great stay! 👋"
         ),
         color=discord.Color.green(),
     )
