@@ -37,17 +37,23 @@ async def on_member_join(member):
     if channel is None:
         return  # nggak ada channel yang bisa dipakai, skip
 
-    pesan = (
-        f"Halo {member.mention}, selamat datang di **{member.guild.name}**! 🎉\n"
-        f"Sekarang kita ada **{member.guild.member_count}** member. Semoga betah ya! 👋"
+    embed = discord.Embed(
+        title="Selamat Datang! 🎉",
+        description=(
+            f"Halo {member.mention}, selamat datang di **{member.guild.name}**!\n"
+            f"Sekarang kita ada **{member.guild.member_count}** member. Semoga betah ya! 👋"
+        ),
+        color=discord.Color.green(),
     )
+    embed.set_thumbnail(url=member.display_avatar.url)
+    embed.set_footer(text=f"Bergabung pada {member.joined_at.strftime('%d %B %Y')}")
 
-    # Kalau ada file gambar lokal untuk welcome, kirim bareng sebagai attachment
     if os.path.isfile(WELCOME_IMAGE_PATH):
         file = discord.File(WELCOME_IMAGE_PATH, filename="welcome.png")
-        await channel.send(content=pesan, file=file)
+        embed.set_image(url="attachment://welcome.png")
+        await channel.send(embed=embed, file=file)
     else:
-        await channel.send(content=pesan)
+        await channel.send(embed=embed)
 
 
 LEAVE_CHANNEL_NAME = os.getenv("LEAVE_CHANNEL_NAME", WELCOME_CHANNEL_NAME)
@@ -64,17 +70,22 @@ async def on_member_remove(member):
     if channel is None:
         return  # nggak ada channel yang bisa dipakai, skip
 
-    pesan = (
-        f"**{member.name}** baru aja meninggalkan server. 👋\n"
-        f"Sekarang tersisa **{member.guild.member_count}** member."
+    embed = discord.Embed(
+        title="Sampai Jumpa 👋",
+        description=(
+            f"**{member.name}** baru aja meninggalkan server.\n"
+            f"Sekarang tersisa **{member.guild.member_count}** member."
+        ),
+        color=discord.Color.red(),
     )
+    embed.set_thumbnail(url=member.display_avatar.url)
 
-    # Kalau ada file gambar lokal untuk goodbye, kirim bareng sebagai attachment
     if os.path.isfile(LEAVE_IMAGE_PATH):
         file = discord.File(LEAVE_IMAGE_PATH, filename="goodbye.png")
-        await channel.send(content=pesan, file=file)
+        embed.set_image(url="attachment://goodbye.png")
+        await channel.send(embed=embed, file=file)
     else:
-        await channel.send(content=pesan)
+        await channel.send(embed=embed)
 
 
 @bot.command(name="hello")
