@@ -50,6 +50,27 @@ async def on_member_join(member):
         await channel.send(content=pesan)
 
 
+LEAVE_CHANNEL_NAME = os.getenv("LEAVE_CHANNEL_NAME", WELCOME_CHANNEL_NAME)
+
+
+@bot.event
+async def on_member_remove(member):
+    """Dipanggil otomatis saat ada member yang keluar/di-kick dari server."""
+    channel = discord.utils.get(member.guild.text_channels, name=LEAVE_CHANNEL_NAME)
+    if channel is None:
+        channel = member.guild.system_channel
+
+    if channel is None:
+        return  # nggak ada channel yang bisa dipakai, skip
+
+    pesan = (
+        f"**{member.name}** baru aja meninggalkan server. 👋\n"
+        f"Sekarang tersisa **{member.guild.member_count}** member."
+    )
+
+    await channel.send(content=pesan)
+
+
 @bot.command(name="hello")
 async def hello(ctx):
     """Command manual: ketik !hello di chat untuk disapa bot."""
