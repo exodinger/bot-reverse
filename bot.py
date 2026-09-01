@@ -37,7 +37,7 @@ async def on_member_join(member):
         return  # nggak ada channel yang bisa dipakai, skip
 
     embed = discord.Embed(
-        title="Selamat Datang! 🎉",
+        title="Welcome Aboard! 🎉",
         description=(
             f"H-hi {member.mention}, welcome to **{member.guild.name}**!\n"
             f"We h-have **{member.guild.member_count}** member(s). h-hope you have a great stay! 👋"
