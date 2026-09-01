@@ -51,6 +51,7 @@ async def on_member_join(member):
 
 
 LEAVE_CHANNEL_NAME = os.getenv("LEAVE_CHANNEL_NAME", WELCOME_CHANNEL_NAME)
+LEAVE_IMAGE_PATH = os.getenv("LEAVE_IMAGE_PATH", "goodbye.png")
 
 
 @bot.event
@@ -68,7 +69,12 @@ async def on_member_remove(member):
         f"Sekarang tersisa **{member.guild.member_count}** member."
     )
 
-    await channel.send(content=pesan)
+    # Kalau ada file gambar lokal untuk goodbye, kirim bareng sebagai attachment
+    if os.path.isfile(LEAVE_IMAGE_PATH):
+        file = discord.File(LEAVE_IMAGE_PATH, filename="goodbye.png")
+        await channel.send(content=pesan, file=file)
+    else:
+        await channel.send(content=pesan)
 
 
 @bot.command(name="hello")
