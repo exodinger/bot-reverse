@@ -22,7 +22,8 @@ async def on_ready():
     print(f"Bot aktif sebagai {bot.user}")
 
 
-WELCOME_CHANNEL_NAME = os.getenv("selamat-datang", "general")
+WELCOME_CHANNEL_NAME = os.getenv("WELCOME_CHANNEL_NAME", "general")
+WELCOME_IMAGE_PATH = os.getenv("WELCOME_IMAGE_PATH", "welcome.png")
 
 
 @bot.event
@@ -37,17 +38,23 @@ async def on_member_join(member):
         return  # nggak ada channel yang bisa dipakai, skip
 
     embed = discord.Embed(
-        title="Welcome Aboard! 🎉",
+        title="Selamat Datang! 🎉",
         description=(
-            f"H-hi {member.mention}, welcome to **{member.guild.name}**!\n"
-            f"We h-have **{member.guild.member_count}** member(s). h-hope you have a great stay! 👋"
+            f"Halo {member.mention}, selamat datang di **{member.guild.name}**!\n"
+            f"Sekarang kita ada **{member.guild.member_count}** member. Semoga betah ya! 👋"
         ),
         color=discord.Color.green(),
     )
     embed.set_thumbnail(url=member.display_avatar.url)
     embed.set_footer(text=f"Bergabung pada {member.joined_at.strftime('%d %B %Y')}")
 
-    await channel.send(embed=embed)
+    # Kalau ada file gambar lokal untuk banner welcome, kirim sebagai attachment
+    if os.path.isfile(WELCOME_IMAGE_PATH):
+        file = discord.File(WELCOME_IMAGE_PATH, filename="welcome.png")
+        embed.set_image(url="attachment://welcome.png")
+        await channel.send(embed=embed, file=file)
+    else:
+        await channel.send(embed=embed)
 
 
 @bot.command(name="hello")
