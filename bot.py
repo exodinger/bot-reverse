@@ -19,6 +19,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
+    bot.add_view(RoleButtonView())  # daftarkan ulang view supaya tombol lama tetap berfungsi
     print(f"Bot aktif sebagai {bot.user}")
 
 
@@ -92,6 +93,56 @@ async def on_member_remove(member):
 async def hello(ctx):
     """Command manual: ketik !hello di chat untuk disapa bot."""
     await ctx.send(f"Halo {ctx.author.mention}! Senang ketemu kamu 😄")
+
+
+# ====== FITUR BUTTON ROLE ======
+# Nama role yang mau dikasih pas tombol diklik. Bisa diganti lewat .env.
+BUTTON_ROLE_NAME = os.getenv("BUTTON_ROLE_NAME", "Member")
+
+
+class RoleButtonView(discord.ui.View):
+    """View persistent supaya tombol tetap berfungsi walau bot restart."""
+
+    def __init__(self):
+        super().__init__(timeout=None)  # timeout=None wajib untuk persistent view
+
+    @discord.ui.button(
+        label="Ambil Role",
+        style=discord.ButtonStyle.green,
+        emoji="✅",
+        custom_id="button_role:ambil",  # custom_id WAJIB unik & tetap sama tiap restart
+    )
+    async def ambil_role(self, interaction: discord.Interaction, button: discord.ui.Button):
+        role = discord.utils.get(interaction.guild.roles, name=BUTTON_ROLE_NAME)
+        if role is None:
+            await interaction.response.send_message(
+                f"Role **{BUTTON_ROLE_NAME}** belum dibuat di server ini. Hubungi admin ya.",
+                ephemeral=True,
+            )
+            return
+
+        if role in interaction.user.roles:
+            await interaction.user.remove_roles(role)
+            await interaction.response.send_message(
+                f"Role **{role.name}** dilepas dari kamu.", ephemeral=True
+            )
+        else:
+            await interaction.user.add_roles(role)
+            await interaction.response.send_message(
+                f"Role **{role.name}** berhasil ditambahkan ke kamu! 🎉", ephemeral=True
+            )
+
+
+@bot.command(name="setuprole")
+@commands.has_permissions(manage_roles=True)
+async def setuprole(ctx):
+    """Command admin: kirim pesan dengan tombol untuk ambil/lepas role."""
+    embed = discord.Embed(
+        title="Ambil Role di Sini!",
+        description=f"Klik tombol di bawah untuk mendapatkan role **{BUTTON_ROLE_NAME}**.",
+        color=discord.Color.blurple(),
+    )
+    await ctx.send(embed=embed, view=RoleButtonView())
 
 
 if __name__ == "__main__":
