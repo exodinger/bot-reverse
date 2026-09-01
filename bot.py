@@ -37,24 +37,17 @@ async def on_member_join(member):
     if channel is None:
         return  # nggak ada channel yang bisa dipakai, skip
 
-    embed = discord.Embed(
-        title="Selamat Datang! 🎉",
-        description=(
-            f"Halo {member.mention}, selamat datang di **{member.guild.name}**!\n"
-            f"Sekarang kita ada **{member.guild.member_count}** member. Semoga betah ya! 👋"
-        ),
-        color=discord.Color.green(),
+    pesan = (
+        f"Halo {member.mention}, selamat datang di **{member.guild.name}**! 🎉\n"
+        f"Sekarang kita ada **{member.guild.member_count}** member. Semoga betah ya! 👋"
     )
-    embed.set_thumbnail(url=member.display_avatar.url)
-    embed.set_footer(text=f"Bergabung pada {member.joined_at.strftime('%d %B %Y')}")
 
-    # Kalau ada file gambar lokal untuk banner welcome, kirim sebagai attachment
+    # Kalau ada file gambar lokal untuk welcome, kirim bareng sebagai attachment
     if os.path.isfile(WELCOME_IMAGE_PATH):
         file = discord.File(WELCOME_IMAGE_PATH, filename="welcome.png")
-        embed.set_image(url="attachment://welcome.png")
-        await channel.send(embed=embed, file=file)
+        await channel.send(content=pesan, file=file)
     else:
-        await channel.send(embed=embed)
+        await channel.send(content=pesan)
 
 
 @bot.command(name="hello")
